@@ -1,0 +1,110 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/Sidebar"; // Ensure Sidebar is imported
+import "./Faculty-Attendance.css";
+
+const FacultyAttendance = () => {
+    const [semester, setSemester] = useState("");
+    const [course, setCourse] = useState("");
+    const [date, setDate] = useState("");
+    const [students, setStudents] = useState([]);
+    
+    const semesters = ["Winter 2024-25", "Fall 2024-25"];
+    const courses = ["BITE312E - Data Mining", "BIT401L - Machine Learning"];
+
+    // Dummy Student Data
+    const studentList = [
+        { id: 1, name: "John Doe", regNo: "22BIT001", attendance: false },
+        { id: 2, name: "Jane Smith", regNo: "22BIT002", attendance: false },
+        { id: 3, name: "Mark Johnson", regNo: "22BIT003", attendance: false }
+    ];
+
+    // Load students when course is selected
+    const handleCourseSelection = (selectedCourse) => {
+        setCourse(selectedCourse);
+        setStudents(studentList); // Load student data
+    };
+
+    // Toggle Attendance Status
+    const toggleAttendance = (id) => {
+        setStudents(students.map(student =>
+            student.id === id ? { ...student, attendance: !student.attendance } : student
+        ));
+    };
+
+    return (
+        <div className="faculty-attendance-container">
+            <h2>Faculty Attendance</h2>
+            
+            {/* Step 1: Select Semester */}
+            <label>Semester:</label>
+            <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+                <option value="">-- Select Semester --</option>
+                {semesters.map((sem) => (
+                    <option key={sem} value={sem}>{sem}</option>
+                ))}
+            </select>
+
+            {/* Step 2: Select Course */}
+            {semester && (
+                <>
+                    <label>Course:</label>
+                    <select value={course} onChange={(e) => handleCourseSelection(e.target.value)}>
+                        <option value="">-- Select Course --</option>
+                        {courses.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
+                    </select>
+                </>
+            )}
+
+            {/* Step 3: Select Date */}
+            {course && (
+                <>
+                    <label>Date:</label>
+                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                </>
+            )}
+
+            {/* Step 4: Attendance Table */}
+            {date && (
+                <div className="attendance-table">
+                    <h3>Mark Attendance for {course}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Student Name</th>
+                                <th>Reg. No.</th>
+                                <th>Date</th>
+                                <th>Mark Attendance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {students.map((student, index) => (
+                                <tr key={student.id}>
+                                    <td>{index + 1}</td>
+                                    <td>{student.name}</td>
+                                    <td>{student.regNo}</td>
+                                    <td>{date}</td>
+                                    <td>
+                                        <label className="switch">
+                                            <input type="checkbox" checked={student.attendance}
+                                                onChange={() => toggleAttendance(student.id)} />
+                                            <span className={`slider ${student.attendance ? "present" : "absent"}`}>
+                                                {student.attendance ? "P" : "A"}
+                                            </span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <button className="submit-btn">Submit Attendance</button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default FacultyAttendance;

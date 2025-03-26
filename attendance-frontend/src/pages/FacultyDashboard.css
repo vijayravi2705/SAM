@@ -1,0 +1,117 @@
+
+
+
+/* ----------------- Faculty Dashboard Main Container ----------------- */
+
+.faculty-dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: white; /* Ensure full background is white */
+}
+
+/* ----------------- Dashboard Main Content ----------------- */
+.faculty-dashboard {
+    gap:40px;
+    flex-grow: 1;
+    padding: 160px;
+    text-align: center;
+    margin-left: 100px; /* Space for sidebar */
+}
+
+/* ----------------- Dashboard Title & Subtitle ----------------- */
+.faculty-dashboard-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #235993;
+    margin-bottom: 5px;
+  
+}
+
+.faculty-dashboard-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* ----------------- Faculty Dashboard Grid Layout (3 per row) ----------------- */
+.faculty-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Ensures 3 tiles per row */
+    gap: 30px; /* Space between tiles */
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ----------------- Dashboard Cards ----------------- */
+.faculty-dashboard-card {
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    gap:30px;
+    transition: transform 0.3s ease-in-out;
+    min-height: 200px; /* Ensure consistent height */
+}
+
+/* Hover Effect */
+.faculty-dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ----------------- Dashboard Card Title ----------------- */
+.faculty-dashboard-card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* ----------------- Dashboard Card Text ----------------- */
+.faculty-dashboard-card p {
+    font-size: 14px;
+    color: #666;
+    margin: 10px 0;
+}
+
+/* ----------------- Dashboard Buttons ----------------- */
+.btn {
+    margin-top:29px;
+    display: inline-block;
+    background: #235993;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Hover Effect */
+.btn:hover {
+    background: #1c4a7d;
+}
+
+/* ----------------- Responsive Adjustments ----------------- */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 tiles per row for medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 tile per row for small screens */
+    }
+}
+
+/* ----------------- Fix Footer Alignment ----------------- */
+.footer {
+    text-align: center;
+    padding: 10px;
+    background: #235993;
+    color: white;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}

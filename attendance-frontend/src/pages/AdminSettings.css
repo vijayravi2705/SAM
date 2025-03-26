@@ -1,0 +1,68 @@
+.admin-settings-container {
+    padding:100px;
+    display: flex;
+    min-height: 100vh;
+    background-color: white;
+    transition: background-color 0.4s ease;
+  }
+  
+  .admin-settings-content {
+    flex: 1;
+    padding: 100px 40px;
+    text-align: center;
+  }
+  
+  .settings-title {
+    font-size: 28px;
+    color: #235993;
+    margin-bottom: 30px;
+  }
+  
+
+  
+  /* Settings Form */
+  .settings-section {
+    margin: 20px auto;
+    max-width: 400px;
+    text-align: left;
+  }
+  
+  .settings-section label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  
+  .settings-section input,
+  .settings-section select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .save-settings-btn {
+    margin-top: 30px;
+    padding: 12px 25px;
+    background-color: #235993;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .save-settings-btn:hover {
+    background-color: #1b4a7d;
+  }
+  
+  /* Dark Mode Styling */
+  body.dark-mode {
+    background-color: #121212;
+    color: white;
+  }
+  
+  body.dark-mode .admin-settings-content {
+    background-color: #1f1f1f;
+  }
+  

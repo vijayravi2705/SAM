@@ -1,0 +1,17 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #235993;
+    color: white;
+    padding: 10px 20px;
+}
+
+.logo {
+    height: 50px;
+}
+
+.profile-icon {
+    height: 40px;
+    border-radius: 50%;
+}

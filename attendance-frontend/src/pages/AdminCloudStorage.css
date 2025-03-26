@@ -1,0 +1,67 @@
+.admin-storage-container {
+  padding:100px;
+  display: flex;
+  min-height: 100vh;
+  background: white;
+}
+
+.admin-storage-content {
+  flex-grow: 1;
+  padding: 60px;
+  text-align: center;
+}
+
+.storage-title {
+  color: #235993;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.storage-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 40px;
+}
+
+.storage-box {
+  background: #f1f2f6;
+  padding: 30px;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.used { border-left: 6px solid #ff6b6b; }
+.free { border-left: 6px solid #51cf66; }
+
+.storage-health {
+  margin-top: 30px;
+}
+
+.healthy {
+  color: green;
+  font-weight: bold;
+}
+
+.manage-buttons {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.manage-btn, .clear-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #235993;
+  color: white;
+  transition: 0.3s;
+}
+
+.manage-btn:hover, .clear-btn:hover {
+  background-color: #1c4a7d;
+}

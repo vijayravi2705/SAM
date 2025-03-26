@@ -1,0 +1,139 @@
+
+.admin-dashboard-container {
+    padding:100px;
+    display: flex;
+    min-height: 100vh;
+    background: white;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Adjust for Sidebar */
+.sidebar.open + .admin-dashboard-container {
+    margin-left: 250px;
+}
+
+.admin-dashboard-content {
+    flex-grow: 1;
+    padding: 40px;
+    text-align: center;
+}
+
+/* Dashboard Titles */
+.admin-dashboard-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #235993;
+    margin-bottom: 5px;
+}
+
+.admin-dashboard-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Dashboard Grid (3x3) */
+.admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Dashboard Cards */
+.admin-dashboard-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2 ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.admin-dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.chart-box:hover{
+transform: translateY(-20px);
+
+}
+/* Dashboard Icons */
+.admin-dashboard-icon {
+    font-size: 35px;
+    color: #235993;
+    margin-bottom: 10px;
+}
+
+/* Charts Section */
+.charts-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.chart-box {
+    width: 45%;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .charts-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .chart-box {
+        width: 90%;
+    }
+}
+
+/* Admin Dashboard Main Wrapper */
+.admin-dashboard {
+    padding: 20px;
+    background: white;
+    min-height: 100vh;
+}
+
+/* Admin Dashboard Grid */
+.admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Chart Container */
+.charts-container {
+    margin-left:10px;
+    
+    grid-template-columns: repeat(2, 1fr); /* Two charts side by side */
+    gap: 50px;
+    margin-top: 30px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Set Fixed Size for Charts */
+.chart-box {
+    width: 450px;  /* Adjust chart width */
+    height: 300px; /* Adjust chart height */
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}

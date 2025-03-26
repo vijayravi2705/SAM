@@ -1,0 +1,181 @@
+/* Faculty Attendance Main Container */
+.faculty-attendance-container {
+    display: flex;
+    background: white;
+    min-height: 100vh;
+    padding: 80px;
+    transition: margin-left 0.3s ease-in-out; /* Smooth transition */
+}
+
+/* Default position */
+.attendance-content {
+    flex-grow: 1;
+    padding: 40px;
+    text-align: center;
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* When sidebar is open, push content */
+.sidebar.open ~ .faculty-attendance-container .attendance-content {
+    margin-left: 250px; /* Adjust this based on sidebar width */
+}
+
+
+/* Aligning Dropdowns & Labels */
+.attendance-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.attendance-controls label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.attendance-controls select,
+.attendance-controls input[type="date"] {
+    padding: 12px;
+    width: 220px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #f9f9f9;
+    text-align: center;
+    display: block;
+}
+
+/* -------------- Attendance Table -------------- */
+.attendance-table {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #235993;
+    color: white;
+}
+
+/* -------------- Improved Toggle Switch -------------- */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    border-radius: 44px;
+    transition: 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Add Circle */
+.slider::before {
+    content: "A";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: white;
+    color: red;
+    text-align: center;
+    font-size: 12px;
+    transition: 0.4s;
+    left: 4px;
+}
+
+/* Present State */
+.switch input:checked + .slider {
+    background-color: green;
+}
+
+.switch input:checked + .slider::before {
+    content: "P";
+    color: green;
+    transform: translateX(26px);
+}
+
+/* -------------- Buttons Styling -------------- */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.go-back-btn, .submit-btn {
+    background: #235993;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    text-align: center;
+    min-width: 150px;
+}
+
+.go-back-btn:hover, .submit-btn:hover {
+    background: #1c4a7d;
+}
+
+/* -------------- Responsive Design -------------- */
+@media (max-width: 768px) {
+    .attendance-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Alternate row colors */
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Light gray for odd rows */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #d4e0ee; /* Light blue on hover */
+    
+}
+
+/* Hover effect for better UI */
+tbody tr:hover {
+    background-color: #72abe8; /* Light blue on hover */
+    transition: background 0.3s ease-in-out;
+}
+

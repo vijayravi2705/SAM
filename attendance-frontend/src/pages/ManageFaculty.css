@@ -1,0 +1,74 @@
+.manage-faculty-container {
+    display: flex;
+    background: #f8f9fa;
+    min-height: 100vh;
+    padding-bottom:100px;
+}
+
+.manage-faculty-content {
+    flex-grow: 1;
+    padding:150Px;
+}
+
+.title {
+    text-align: center;
+    font-size: 28px;
+    color: #235993;
+   
+}
+
+.table-data{
+  margin-left:90px;
+  margin-right:90px;
+}
+.add-form {
+    margin-top: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.add-form input {
+    
+    padding: 10px;
+    width: 220px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-form button {
+    background: #235993;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.add-form button:hover {
+    background: #1c4a7d;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #235993;
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f8ff;
+}

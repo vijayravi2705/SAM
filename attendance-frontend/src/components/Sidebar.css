@@ -1,0 +1,147 @@
+/* ------------------- SIDEBAR CONTAINER ------------------- */
+.sidebar {
+    width: 90px; /* Default collapsed */
+    height: 100vh;
+    background: white;
+    color: black;
+    position: fixed;
+    top: 60px; /* Moves it down to align with the header */
+    left: 0;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ddd;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 1000;
+    padding-top: 10px;
+}
+
+.sidebar.open {
+    width: 250px;
+}
+
+/* Sidebar Header with Logo */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+    width: 40px; /* Adjust logo size */
+    height: auto;
+    margin-right: px;
+}
+
+/* Sidebar Title */
+.sidebar-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #235993;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    color: black;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* ------------------- NAVIGATION MENU ------------------- */
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Menu Item Styling */
+.nav-list li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+}
+
+/* Sidebar Links */
+.nav-list a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Sidebar Icons */
+.sidebar-icon {
+    font-size: 22px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Sidebar Text */
+.show {
+    display: inline;
+    margin-left: 10px;
+}
+
+.hide {
+    display: none;
+}
+
+/* Hover Effect */
+.nav-list a:hover {
+    background: #f2f2f2;
+}
+
+/* ---------------- Tooltip Styling ---------------- */
+.sidebar.closed .nav-list li::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 60%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-weight: normal;
+    font-size: 13px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+    z-index: 9999;
+    margin-left: 8px;
+}
+
+/* Show Tooltip on Hover */
+.sidebar.closed .nav-list li:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Logout Styling */
+.logout {
+    cursor: pointer;
+    background: white;
+    color: black;
+    border-top: 1px solid #ddd;
+}
+
+.logout:hover {
+    background: #f2f2f2;
+}
