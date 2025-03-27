@@ -1,16 +1,28 @@
-import React from "react";
-import DashboardLayout from "../pages/DashboardLayout"; // Use layout with Sidebar
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "../pages/DashboardLayout";
 import "./StudentDashboard.css";
 
 const StudentDashboard = () => {
+  const [attendance, setAttendance] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (!user) return;
+
+    fetch(`http://localhost:5000/api/student/${user.login_id}/attendance-summary`)
+    .then((res) => res.json())
+      .then((data) => setAttendance(data))
+      .catch((err) => console.error("Error fetching attendance:", err));
+  }, []);
+
   return (
     <DashboardLayout>
       <div className="student-dashboard-content">
         <h1 className="student-dashboard-title">Welcome to the Student Dashboard!</h1>
         <p className="student-dashboard-subtitle">Access your attendance, courses, feedback, and more.</p>
 
-        {/* Dashboard Grid Sections */}
         <div className="student-dashboard-grid">
+          {/* Static Cards */}
           <div className="student-dashboard-card">
             <h2>📢 Announcements</h2>
             <p>🔹 Mid-Semester Feedback Open until March 14, 2025</p>
@@ -50,7 +62,13 @@ const StudentDashboard = () => {
           <div className="student-dashboard-card">
             <h2>📊 Attendance Overview</h2>
             <p>Your overall attendance for the semester:</p>
-            <p className="low-attendance">⚠️ 68% - Needs Improvement!</p>
+            {attendance ? (
+              <p className={attendance.overall_attendance < 75 ? "low-attendance" : "high-attendance"}>
+                {attendance.overall_attendance}% {attendance.overall_attendance < 75 ? "- Needs Improvement!" : "- Good Standing"}
+              </p>
+            ) : (
+              <p>Loading attendance...</p>
+            )}
             <a href="/student-attendance" className="quick-action">View Attendance Details</a>
           </div>
         </div>

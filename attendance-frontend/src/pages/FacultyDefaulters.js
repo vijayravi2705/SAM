@@ -1,128 +1,162 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "./FacultyDefaulters.css";
 
 const FacultyDefaulters = () => {
-    const navigate = useNavigate();
-    const [semester, setSemester] = useState("");
-    const [course, setCourse] = useState("");
-    const [defaulters, setDefaulters] = useState([]);
-    const [lastThreeDates, setLastThreeDates] = useState([]);
+  const navigate = useNavigate();
+  const [semester, setSemester] = useState("");
+  const [course, setCourse] = useState("");
+  const [defaulters, setDefaulters] = useState([]);
+  const [courseList, setCourseList] = useState([]);
 
-    // Function to fetch last 3 classes dynamically
-    const generateLastThreeDates = () => {
-        const today = new Date();
-        const dates = [];
-        for (let i = 1; i <= 3; i++) {
-            const pastDate = new Date(today);
-            pastDate.setDate(today.getDate() - (i * 2)); // Assuming alternate classes
-            dates.push(pastDate.toISOString().split("T")[0]); // Format YYYY-MM-DD
-        }
-        return dates;
-    };
+  const faculty = JSON.parse(localStorage.getItem("userInfo"));
 
-    const handleSemesterChange = (e) => {
-        setSemester(e.target.value);
-        setCourse("");
+  const semesterMap = {
+    "Winter Semester 2024-25 - VLR": "wis2425",
+    "Weekend Semester 2024-25 - VLR": "wks2425"
+  };
+
+  const fetchCourses = async () => {
+    if (faculty?.login_id && semester) {
+      const res = await fetch(
+        `http://localhost:5000/api/faculty/${faculty.login_id}/courses?semester=${semesterMap[semester]}`
+      );
+      const data = await res.json();
+      setCourseList(data);
+    }
+  };
+
+  useEffect(() => {
+    setCourse("");
+    setDefaulters([]);
+    if (semester) fetchCourses();
+  }, [semester]);
+
+  const handleCourseChange = async (e) => {
+    const selectedCourse = e.target.value;
+    setCourse(selectedCourse);
+  
+    if (!selectedCourse) return;
+  
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/faculty/${faculty.login_id}/defaulters?semester=${semesterMap[semester]}&course=${selectedCourse}`
+      );
+      const data = await res.json();
+  
+      // ✅ SAFETY CHECK — if data is not an array, don't crash
+      if (!Array.isArray(data)) {
         setDefaulters([]);
-    };
+        return;
+      }
+  
+      const formatted = data.map((d) => ({
+        ...d,
+        lastThree: d.recent_attendance?.map(
+          (a) => `${a.date.split('T')[0]} ${a.status.toUpperCase().charAt(0)}`
+        ) || [],
+        reg_no: d.student_id,
+        shortfall: Math.ceil((75 - d.attendance_percent) * d.total_classes / 100),
+      }));
+  
+      setDefaulters(formatted);
+    } catch (error) {
+      console.error("Error fetching defaulters:", error);
+      setDefaulters([]);
+    }
+  };
+  
+  const downloadCSV = () => {
+    let csv = "Sl.No,Name,Reg No,Attendance %,Shortfall Classes,Last 3 Records\n";
+    defaulters.forEach((d, i) => {
+      csv += `${i + 1},${d.name},${d.reg_no},${d.attendance_percent}%,${d.shortfall},"${d.lastThree.join(", ")}"\n`;
+    });
 
-    const handleCourseChange = (e) => {
-        setCourse(e.target.value);
-        fetchDefaulters(e.target.value);
-    };
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `defaulters-${semesterMap[semester]}-${course}.csv`;
+    a.click();
+  };
 
-    const fetchDefaulters = (course) => {
-        setLastThreeDates(generateLastThreeDates());
+  return (
+    <div className="faculty-defaulters-container">
+      <Sidebar />
+      <div className="defaulters-content">
+        <h2 className="dashboard-title">Defaulters List</h2>
+        <p className="dashboard-subtitle">
+          View students with attendance below 75%
+        </p>
 
-        // Mock Defaulters Data with Last 3 Classes Attendance
-        const mockDefaulters = [
-            { id: 1, name: "John Doe", regNo: "22BIT0687", attendance: "60%", shortfall: "10 classes", lastThree: ["P", "A", "P"] },
-            { id: 2, name: "Jane Smith", regNo: "22BIT0345", attendance: "58%", shortfall: "12 classes", lastThree: ["A", "A", "P"] },
-            { id: 3, name: "Michael Brown", regNo: "22BIT0789", attendance: "62%", shortfall: "8 classes", lastThree: ["P", "P", "P"] },
-            { id: 4, name: "Emily Davis", regNo: "22BIT0234", attendance: "55%", shortfall: "15 classes", lastThree: ["A", "A", "A"] },
-        ];
-        setDefaulters(mockDefaulters);
-    };
+        <div className="filter-controls">
+          <div className="dropdown-group">
+            <label>Semester</label>
+            <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+              <option value="">-- Select Semester --</option>
+              <option value="Winter Semester 2024-25 - VLR">Winter Semester 2024-25 - VLR</option>
+              <option value="Weekend Semester 2024-25 - VLR">Weekend Semester 2024-25 - VLR</option>
+            </select>
+          </div>
 
-    return (
-        <div className="faculty-defaulters-container">
-            <Sidebar />
-            <div className="defaulters-content">
-                <h2 className="dashboard-title">Defaulters List</h2>
-                <p className="dashboard-subtitle">View students with attendance below 75%</p>
-
-                {/* Dropdowns */}
-                <div className="filter-controls">
-                    <div className="dropdown-group">
-                        <label>Semester</label>
-                        <select value={semester} onChange={handleSemesterChange}>
-                            <option value="">-- Select Semester --</option>
-                            <option value="Winter 2025">Winter 2025</option>
-                            <option value="Weekend 2025">Weekend 2025</option>
-                            <option value="Summer 2025">Summer 2025</option>
-                        </select>
-                    </div>
-
-                    {semester && (
-                        <div className="dropdown-group">
-                            <label>Course</label>
-                            <select value={course} onChange={handleCourseChange}>
-                                <option value="">-- Select Course --</option>
-                                <option value="BIT401L - Machine Learning">Machine Learning</option>
-                                <option value="BIT412L - Cloud Computing">Cloud Computing</option>
-                                <option value="BIT410L - Data Mining">Data Mining</option>
-                            </select>
-                        </div>
-                    )}
-                </div>
-
-                {/* Defaulters Table */}
-                {defaulters.length > 0 && (
-                    <div className="defaulters-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Sl.No</th>
-                                    <th>Name</th>
-                                    <th>Reg No</th>
-                                    <th>Attendance %</th>
-                                    <th>Shortfall Classes</th>
-                                    {lastThreeDates.map((date, index) => (
-                                        <th key={index}>{date}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {defaulters.map((student, index) => (
-                                    <tr key={student.id}>
-                                        <td>{index + 1}</td>
-                                        <td>{student.name}</td>
-                                        <td>{student.regNo}</td>
-                                        <td className="low-attendance">{student.attendance}</td>
-                                        <td>{student.shortfall}</td>
-                                        {student.lastThree.map((status, i) => (
-                                            <td key={i}>
-                                                <span className={`attendance-${status}`}>
-                                                    {status}
-                                                </span>
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
-                {/* Go Back Button */}
-                <button className="go-back-btn" onClick={() => navigate(-1)}>
-                     Go Back
-                </button>
+          {semester && (
+            <div className="dropdown-group">
+              <label>Course</label>
+              <select value={course} onChange={handleCourseChange}>
+                <option value="">-- Select Course --</option>
+                {courseList.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.code} - {c.title}
+                  </option>
+                ))}
+              </select>
             </div>
+          )}
         </div>
-    );
+
+        {defaulters.length > 0 && (
+          <div className="defaulters-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sl.No</th>
+                  <th>Name</th>
+                  <th>Reg No</th>
+                  <th>Attendance %</th>
+                  <th>Shortfall Classes</th>
+                  <th>Last 3 Records</th>
+                </tr>
+              </thead>
+              <tbody>
+                {defaulters.map((student, index) => (
+                  <tr key={student.student_id}>
+                    <td>{index + 1}</td>
+                    <td>{student.name}</td>
+                    <td>{student.reg_no}</td>
+                    <td className="low-attendance">{student.attendance_percent}%</td>
+                    <td>{student.shortfall}</td>
+                    <td>
+                      {student.lastThree.map((entry, i) => (
+                        <div key={i}>{entry}</div>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button onClick={downloadCSV} className="submit-btn">
+              Download as CSV
+            </button>
+          </div>
+        )}
+
+        <button className="go-back-btn" onClick={() => navigate(-1)}>
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default FacultyDefaulters;

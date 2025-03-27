@@ -13,8 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ManageFaculty from './pages/ManageFaculty';
 import AdminMarkAttendance from "./pages/AdminMarkAttendance";
 import AdminDefaulters from "./pages/AdminDefaulters";
-import AdminCloudStorage from "./pages/AdminCloudStorage";
-import AdminSettings from "./pages/AdminSettings";
+
 
 // Header Component
 const Header = () => {
@@ -129,8 +128,7 @@ export default function App() {
           <Route path="/admin-manage-faculty" element={<ManageFaculty />} />
           <Route path="/admin-mark-attendance" element={<AdminMarkAttendance />} />
           <Route path="/admin-defaulters" element={<AdminDefaulters />} />
-          <Route path="/admin-cloud-storage" element={<AdminCloudStorage />} />
-          <Route path="/admin-settings" element={<AdminSettings />} />
+
 
 
 

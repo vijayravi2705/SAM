@@ -115,18 +115,6 @@ const Sidebar = () => {
                                     <span className={isOpen ? "show" : "hide"}>Defaulters</span>
                                 </Link>
                             </li>
-                            <li data-tooltip="Cloud Management">
-                                <Link to="/admin-cloud-storage"className="sidebar-link">
-                                    <FaCloud className="sidebar-icon" />
-                                    <span className={isOpen ? "show" : "hide"}>Cloud Storage</span>
-                                </Link>
-                            </li>
-                            <li data-tooltip="Settings">
-                                <Link to="/admin-settings" className="sidebar-link">
-                                    <FaCog className="sidebar-icon" />
-                                    <span className={isOpen ? "show" : "hide"}>Settings</span>
-                                </Link>
-                            </li>
 
                         </>
                     )}

@@ -1,85 +1,139 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar"; // Ensure Sidebar is imported
-import "./StudentAttendance.css"; // Ensure CSS file is correctly linked
+import Sidebar from "../components/Sidebar";
+import "./StudentAttendance.css";
 
 const StudentAttendance = () => {
-  const [selectedSemester, setSelectedSemester] = useState(""); // Track selected semester
-  const navigate = useNavigate(); // Navigation hook for "Go Back"
+  const navigate = useNavigate();
+  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [courseList, setCourseList] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
 
-  // List of semesters
   const semesters = [
-    "Winter Semester 2024-25 - VLR",
-    "Fall Semester 2024-25 - VLR",
-    "Winter Semester 2023-24 - VLR",
-    "Fall Semester 2023-24 - VLR",
-    "Winter Semester 2022-23 - VLR",
-    "Fall Semester 2022-23 - VLR",
+    { id: "wis2425", label: "Winter Semester 2024-25 - VLR" },
+    { id: "wks2425", label: "Weekend Semester 2024-25 - VLR" },
   ];
+
+  const student = JSON.parse(localStorage.getItem("userInfo"));
+
+  useEffect(() => {
+    if (selectedSemester && student?.login_id) {
+      console.log("📢 Fetching courses for:", student.login_id, selectedSemester);
+      fetch(`http://localhost:5000/api/student/${student.login_id}/courses?semester=${selectedSemester}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("✅ Course list:", data);
+          setCourseList(data);
+        })
+        .catch((err) => {
+          console.error("❌ Error fetching courses:", err);
+        });
+    }
+  }, [selectedSemester, student?.login_id]);
+
+  useEffect(() => {
+    if (student?.login_id && selectedSemester && selectedCourse) {
+      console.log("📢 Fetching attendance for:", selectedCourse);
+      fetch(`http://localhost:5000/api/student/${student.login_id}/attendance/${selectedCourse}?semester=${selectedSemester}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("✅ Attendance data:", data);
+          setAttendanceData(data);
+        })
+        .catch((err) => {
+          console.error("❌ Error fetching attendance:", err);
+        });
+    }
+  }, [selectedCourse, selectedSemester, student?.login_id]);
+
+  const calculateStats = () => {
+    const total = attendanceData.length;
+    const attended = attendanceData.filter((a) => a.status === "present").length;
+    const percentage = total ? Math.round((attended / total) * 100) : 0;
+    return { attended, total, percentage };
+  };
+
+  const { attended, total, percentage } = calculateStats();
 
   return (
     <div className="attendance-container">
-      {/* Sidebar (Ensure it remains functional) */}
       <Sidebar />
-
       <div className="attendance-content">
         <h2 className="attendance-title">Student Attendance Details</h2>
 
-        {/* Dropdown for selecting semester */}
+        {/* Semester Dropdown */}
         <div className="semester-dropdown">
-          <label className="sem">Semester: </label>
-          <select 
-            value={selectedSemester} 
-            onChange={(e) => setSelectedSemester(e.target.value)}
+          <label>Semester:</label>
+          <select
+            value={selectedSemester}
+            onChange={(e) => {
+              setSelectedSemester(e.target.value);
+              setSelectedCourse("");
+              setAttendanceData([]);
+              setCourseList([]);
+            }}
           >
-            <option value="">-- Choose Semester --</option>
-            {semesters.map((semester, index) => (
-              <option key={index} value={semester}>{semester}</option>
+            <option value="">-- Select Semester --</option>
+            {semesters.map((sem) => (
+              <option key={sem.id} value={sem.id}>
+                {sem.label}
+              </option>
             ))}
           </select>
         </div>
 
-        {/* Attendance table appears only after selecting a semester */}
+        {/* Course Dropdown */}
         {selectedSemester && (
+          <div className="course-dropdown">
+            <label>Course:</label>
+            <select
+              value={selectedCourse}
+              onChange={(e) => setSelectedCourse(e.target.value)}
+            >
+              <option value="">-- Select Course --</option>
+              {courseList.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.code} - {course.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Attendance Table */}
+        {selectedCourse && attendanceData.length > 0 && (
           <div className="attendance-table-container">
             <h3>Attendance for {selectedSemester}</h3>
             <table className="attendance-table">
               <thead>
                 <tr>
-                  <th>Sl.No</th>
-                  <th>Class Group</th>
-                  <th>Course Detail</th>
-                  <th>Faculty</th>
-                  <th>Attended</th>
-                  <th>Total Classes</th>
-                  <th>Attendance %</th>
+                  <th>Sl. No</th>
+                  <th>Date</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>General (Semester)</td>
-                  <td>BITE312E - Data Mining</td>
-                  <td>Prof. Subhashini</td>
-                  <td>9</td>
-                  <td>16</td>
-                  <td className="low-attendance">57%</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>General (Semester)</td>
-                  <td>BIT401L - Machine Learning</td>
-                  <td>Prof. Ramkumar</td>
-                  <td>14</td>
-                  <td>29</td>
-                  <td className="high-attendance">70%</td>
-                </tr>
+                {attendanceData.map((entry, index) => (
+                  <tr key={entry.id}>
+                    <td>{index + 1}</td>
+                    <td>{entry.date}</td>
+                    <td
+                      className={entry.status === "present" ? "present" : "absent"}
+                    >
+                      {entry.status.charAt(0).toUpperCase() + entry.status.slice(0)}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+            <p className="attendance-summary">
+              <strong>Attended:</strong> {attended} / {total} |
+              <strong> Attendance %:</strong> {percentage}%
+            </p>
           </div>
         )}
 
-        {/* "Go Back" Button - Ensuring it works */}
         <button className="go-back-btn" onClick={() => navigate(-1)}>
           Go Back
         </button>

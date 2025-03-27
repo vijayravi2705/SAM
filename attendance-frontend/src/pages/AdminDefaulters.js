@@ -1,41 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import "./AdminDefaulters.css";
 
-const mockFacultyCourses = {
-  "Dr. Smith": ["Machine Learning", "Cloud Computing"],
-  "Dr. Jones": ["Data Mining"],
-};
-
-const mockDefaulters = {
-  "Dr. Smith": {
-    "Machine Learning": [
-      { name: "John Doe", regNo: "22BIT001", percentage: 62, lastClasses: ["P", "A", "P"] },
-      { name: "Jane Smith", regNo: "22BIT002", percentage: 58, lastClasses: ["A", "A", "P"] },
-    ],
-    "Cloud Computing": [
-      { name: "Sarah Lee", regNo: "22BIT003", percentage: 67, lastClasses: ["P", "P", "P"] }
-    ],
-  },
-  "Dr. Jones": {
-    "Data Mining": [
-      { name: "David Kim", regNo: "22BIT004", percentage: 60, lastClasses: ["A", "A", "A"] }
-    ],
-  },
-};
-
 const AdminDefaulters = () => {
-  const [selectedFaculty, setSelectedFaculty] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState("");
+  const [defaulters, setDefaulters] = useState([]);
+
+  const semesterMap = {
+    "Winter Semester 2024-25 - VLR": 1,
+    "Weekend Semester 2024-25 - WKD": 2
+  };
+
+  useEffect(() => {
+    const fetchDefaulters = async () => {
+      if (selectedSemester) {
+        const semester_id = semesterMap[selectedSemester];
+
+        try {
+          const res = await fetch("http://localhost:5000/api/admin/defaulters/semester", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ semester_id })
+          });
+
+          const data = await res.json();
+          setDefaulters(data);
+        } catch (err) {
+          console.error("Error fetching defaulters", err);
+        }
+      }
+    };
+
+    fetchDefaulters();
+  }, [selectedSemester]);
 
   const handleDownloadCSV = () => {
-    if (!selectedFaculty || !selectedCourse) return;
-    const data = mockDefaulters[selectedFaculty][selectedCourse];
+    if (!defaulters.length) return;
+
     const csvContent =
       "Name,RegNo,Percentage,Last Class 1,Last Class 2,Last Class 3\n" +
-      data.map(d =>
-        `${d.name},${d.regNo},${d.percentage},${d.lastClasses.join(",")}`
-      ).join("\n");
+      defaulters
+        .map(
+          (d) =>
+            `${d.name},${d.reg_no},${d.attendance_percentage},${d.last_3[0] || ""},${d.last_3[1] || ""},${d.last_3[2] || ""}`
+        )
+        .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -45,12 +54,6 @@ const AdminDefaulters = () => {
     link.click();
   };
 
-  const filteredCourses = selectedFaculty ? mockFacultyCourses[selectedFaculty] : [];
-
-  const defaulters = selectedFaculty && selectedCourse
-    ? mockDefaulters[selectedFaculty][selectedCourse] || []
-    : [];
-
   return (
     <div className="admin-defaulters-container">
       <Sidebar />
@@ -58,20 +61,18 @@ const AdminDefaulters = () => {
         <h2>Defaulters List</h2>
 
         <div className="dropdowns">
-          <select value={selectedFaculty} onChange={(e) => {
-            setSelectedFaculty(e.target.value);
-            setSelectedCourse("");
-          }}>
-            <option value="">-- Select Faculty --</option>
-            {Object.keys(mockFacultyCourses).map(faculty => (
-              <option key={faculty} value={faculty}>{faculty}</option>
-            ))}
-          </select>
-
-          <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} disabled={!selectedFaculty}>
-            <option value="">-- Select Course --</option>
-            {filteredCourses.map(course => (
-              <option key={course} value={course}>{course}</option>
+          <select
+            value={selectedSemester}
+            onChange={(e) => {
+              setSelectedSemester(e.target.value);
+              setDefaulters([]);
+            }}
+          >
+            <option value="">-- Select Semester --</option>
+            {Object.keys(semesterMap).map((sem) => (
+              <option key={sem} value={sem}>
+                {sem}
+              </option>
             ))}
           </select>
         </div>
@@ -90,21 +91,22 @@ const AdminDefaulters = () => {
               </thead>
               <tbody>
                 {defaulters.map((student, index) => (
-                  <tr key={student.regNo}>
+                  <tr key={student.reg_no}>
                     <td>{index + 1}</td>
                     <td>{student.name}</td>
-                    <td>{student.regNo}</td>
-                    <td>{student.percentage}%</td>
-                    {student.lastClasses.map((cls, idx) => (
-                      <td key={idx}>
-                        <span className={`status ${cls === "P" ? "present" : "absent"}`}>{cls}</span>
-                      </td>
-                    ))}
+                    <td>{student.reg_no}</td>
+                    <td>{student.attendance_percentage}%</td>
+                    {Array.isArray(student.last_3)
+                      ? student.last_3.map((cls, idx) => (
+                          <td key={idx}>
+                            <span className={`status ${cls === "P" ? "present" : "absent"}`}>{cls}</span>
+                          </td>
+                        ))
+                      : [<td key="n1">-</td>, <td key="n2">-</td>, <td key="n3">-</td>]}
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <button className="download-btn" onClick={handleDownloadCSV}>
               📥 Download CSV
             </button>

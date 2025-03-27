@@ -1,78 +1,117 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import "./Faculty-Attendance.css";
 
 const FacultyAttendance = () => {
     const navigate = useNavigate();
+    const faculty = JSON.parse(localStorage.getItem("userInfo"));
     const [semester, setSemester] = useState("");
     const [course, setCourse] = useState("");
     const [date, setDate] = useState("");
+    const [courses, setCourses] = useState([]);
     const [students, setStudents] = useState([]);
 
-    const handleSemesterChange = (e) => {
-        setSemester(e.target.value);
-        setCourse("");
-        setDate("");
-        setStudents([]);
+    // 🧠 Map dropdown label to backend code
+    const semesterMap = {
+        "Winter Semester 2024-25 - VLR": "wis2425",
+        "Weekend Semster 2024-25 - VLR": "wks2425"
     };
 
-    const handleCourseChange = (e) => {
-        setCourse(e.target.value);
-        setDate("");
-        setStudents([]);
-    };
+    // Fetch courses taught by faculty
+    useEffect(() => {
+        const semesterCode = semesterMap[semester];
+        if (faculty?.login_id && semesterCode) {
+            fetch(`http://localhost:5000/api/faculty/${faculty.login_id}/courses?semester=${semesterCode}`)
+                .then(res => res.json())
+                .then(data => setCourses(data))
+                .catch(err => console.error("Error fetching faculty courses:", err));
+        }
+    }, [faculty?.login_id, semester]);
 
-    const handleDateChange = (e) => {
-        setDate(e.target.value);
-
-        // Mock Student Data
-        setStudents([
-            { id: 1, name: "John Doe", regNo: "22BIT0687", status: "P" },
-            { id: 2, name: "Jane Smith", regNo: "22BIT0345", status: "A" },
-            { id: 3, name: "Michael Brown", regNo: "22BIT0789", status: "P" },
-            { id: 4, name: "Emily Davis", regNo: "22BIT0234", status: "A" },
-            { id: 5, name: "David Wilson", regNo: "22BIT0567", status: "P" },
-            { id: 6, name: "Sarah Johnson", regNo: "22BIT0456", status: "A" },
-        ]);
-    };
+    // Fetch students enrolled in that course
+    useEffect(() => {
+        const semesterCode = semesterMap[semester];
+        if (course && semesterCode) {
+            fetch(`http://localhost:5000/api/faculty/${faculty.login_id}/students?course=${course}&semester=${semesterCode}`)
+                .then(res => res.json())
+                .then(data => setStudents(data.map(s => ({ ...s, status: "P" }))))
+                .catch(err => console.error("Error fetching students:", err));
+        }
+    }, [course, semester, faculty?.login_id]);
 
     const toggleAttendance = (index) => {
-        setStudents((prevStudents) =>
-            prevStudents.map((student, i) =>
-                i === index ? { ...student, status: student.status === "P" ? "A" : "P" } : student
+        setStudents((prev) =>
+            prev.map((s, i) =>
+                i === index ? { ...s, status: s.status === "P" ? "A" : "P" } : s
             )
         );
+    };
+
+    const handleSubmit = () => {
+        const semesterCode = semesterMap[semester];
+        if (!semesterCode || !date || !course || students.length === 0) {
+            alert("Fill all fields before submitting.");
+            return;
+        }
+
+        const formattedStudents = students.map(s => ({
+            student_id: s.student_id,
+            status: s.status
+        }));
+
+        fetch(`http://localhost:5000/api/faculty/${faculty.login_id}/mark-attendance`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                semester: semesterCode,
+                course_id: course,
+                date,
+                records: formattedStudents
+            }),
+        })
+            .then(res => {
+                if (res.ok) alert("Attendance submitted!");
+                else throw new Error("Failed to submit");
+            })
+            .catch(err => alert("Error: " + err.message));
     };
 
     return (
         <div className="faculty-attendance-container">
             <Sidebar />
-
             <div className="attendance-content">
                 <h2 className="dashboard-title">Faculty Attendance</h2>
                 <p className="dashboard-subtitle">Mark attendance for your students</p>
 
-                {/* Dropdown Section */}
                 <div className="attendance-controls">
                     <div className="dropdown-group">
                         <label>Semester</label>
-                        <select value={semester} onChange={handleSemesterChange}>
+                        <select value={semester} onChange={(e) => {
+                            setSemester(e.target.value);
+                            setCourse("");
+                            setStudents([]);
+                        }}>
                             <option value="">-- Select Semester --</option>
-                            <option value="Winter 2025">Winter 2025</option>
-                            <option value="Weekend 2025">Weekend 2025</option>
-                            <option value="Summer 2025">Summer 2025</option>
+                            {Object.keys(semesterMap).map((label) => (
+                                <option key={label} value={label}>{label}</option>
+                            ))}
                         </select>
                     </div>
 
                     {semester && (
                         <div className="dropdown-group">
                             <label>Course</label>
-                            <select value={course} onChange={handleCourseChange}>
+                            <select value={course} onChange={(e) => {
+                                setCourse(e.target.value);
+                                setStudents([]);
+                            }}>
                                 <option value="">-- Select Course --</option>
-                                <option value="BIT401L - Machine Learning">Machine Learning</option>
-                                <option value="BIT412L - Cloud Computing">Cloud Computing</option>
-                                <option value="BIT410L - Data Mining">Data Mining</option>
+                                {courses.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.code} - {c.title}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     )}
@@ -80,59 +119,54 @@ const FacultyAttendance = () => {
                     {course && (
                         <div className="dropdown-group">
                             <label>Date</label>
-                            <input type="date" value={date} onChange={handleDateChange} />
+                            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                         </div>
                     )}
                 </div>
 
-                {/* Attendance Table */}
                 {students.length > 0 && (
-                    <div className="attendance-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Sl.No</th>
-                                    <th>Name</th>
-                                    <th>Reg No</th>
-                                    <th>Date</th>
-                                    <th>Mark Attendance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {students.map((student, index) => (
-                                    <tr key={student.id}>
-                                        <td>{index + 1}</td>
-                                        <td>{student.name}</td>
-                                        <td>{student.regNo}</td>
-                                        <td>{date}</td>
-                                        <td>
-                                            <label className="switch">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={student.status === "P"}
-                                                    onChange={() => toggleAttendance(index)}
-                                                />
-                                                <span className={`slider ${student.status === "P" ? "present" : "absent"}`}>
-                                                    <span className="circle"></span>
-                                                </span>
-                                            </label>
-                                        </td>
-
+                    <>
+                        <div className="attendance-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Sl.No</th>
+                                        <th>Name</th>
+                                        <th>Student ID</th>
+                                        <th>Date</th>
+                                        <th>Mark Attendance</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                                </thead>
+                                <tbody>
+                                    {students.map((s, i) => (
+                                        <tr key={s.student_id}>
+                                            <td>{i + 1}</td>
+                                            <td>{s.name}</td>
+                                            <td>{s.student_id}</td>
+                                            <td>{date}</td>
+                                            <td>
+                                                <label className="switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={s.status === "P"}
+                                                        onChange={() => toggleAttendance(i)}
+                                                    />
+                                                    <span className={`slider ${s.status === "P" ? "present" : "absent"}`}>
+                                                        <span className="circle"></span>
+                                                    </span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                {/* Action Buttons */}
-                {students.length > 0 && (
-                    <div className="action-buttons">
-                        <button className="go-back-btn" onClick={() => navigate(-1)}>
-                             Go Back
-                        </button>
-                        <button className="submit-btn">Submit Attendance</button>
-                    </div>
+                        <div className="action-buttons">
+                            <button className="go-back-btn" onClick={() => navigate(-1)}>Go Back</button>
+                            <button className="submit-btn" onClick={handleSubmit}>Submit Attendance</button>
+                        </div>
+                    </>
                 )}
             </div>
         </div>
