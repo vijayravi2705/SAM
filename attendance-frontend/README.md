@@ -1,70 +1,261 @@
-# Getting Started with Create React App
+# 🎓 Smart Attendance Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack attendance management system developed to digitize attendance tracking in educational institutions. The system provides separate dashboards for Students, Faculty, and Administrators with role-based access and real-time attendance management.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📌 Problem Statement
 
-### `npm start`
+Traditional attendance management relied on manual processes, making it time-consuming, error-prone, and difficult to monitor across multiple classes and departments.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 💡 Solution
 
-### `npm test`
+Developed a web-based attendance management system that enables:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Students to view attendance records
+- Faculty to mark and manage attendance
+- Administrators to manage faculty, monitor attendance statistics, and generate reports
 
-### `npm run build`
+The application was deployed on AWS cloud infrastructure during development using EC2, Aurora RDS, Amazon S3, and a custom VPC.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+> **Note:** The cloud infrastructure has been terminated after project completion to avoid recurring AWS costs. The complete source code, architecture diagrams, and documentation remain available in this repository.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# ✨ Features
 
-### `npm run eject`
+## Student
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Secure Login
+- Dashboard
+- Attendance Percentage
+- Attendance History
+- Institutional Announcements
+- Feedback Portal
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Faculty
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Faculty Dashboard
+- Mark Attendance
+- Attendance Overview
+- Defaulters List
+- Attendance Records
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Administrator
 
-## Learn More
+- Admin Dashboard
+- Manage Faculty
+- Add Faculty
+- Delete Faculty
+- Mark Attendance
+- Attendance Analytics
+- CSV Report Generation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# 🛠 Tech Stack
 
-### Code Splitting
+## Frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- React.js
+- HTML5
+- CSS3
+- JavaScript
+- Axios
 
-### Analyzing the Bundle Size
+## Backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Node.js
+- Express.js
+- REST API
 
-### Making a Progressive Web App
+## Database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- MySQL
+- Amazon Aurora RDS
 
-### Advanced Configuration
+## Cloud Services
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- AWS EC2
+- Amazon Aurora RDS
+- Amazon S3
+- AWS VPC
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# ☁ Cloud Architecture
 
-### `npm run build` fails to minify
+The application was originally deployed on AWS using:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Virtual Private Cloud (VPC)
+- Amazon EC2
+- Amazon Aurora RDS
+- Amazon S3
+- Security Groups
+- Internet Gateway
+
+Cloud architecture documentation is available in the **architecture/** folder.
+
+---
+
+# 🗄 Database Design
+
+The database follows a normalized relational model consisting of:
+
+- Student
+- Faculty
+- Admin
+- Course
+- Semester
+- Attendance
+- Login Access
+- Student_Course
+- Faculty_Course
+
+### Entity Relationship Diagram
+
+![ER Diagram](database/ER-Diagram.png)
+
+---
+
+# 📸 Application Screenshots
+
+## Landing Page
+
+![Home](screenshots/01-homepage.png)
+
+---
+
+## Student Module
+
+### Login
+
+![Student Login](screenshots/02-student-login.png)
+
+### Dashboard
+
+![Student Dashboard](screenshots/04-student-dashboard.png)
+
+### Attendance Details
+
+![Attendance](screenshots/05-attendance-details.png)
+
+---
+
+## Faculty Module
+
+### Dashboard
+
+![Faculty Dashboard](screenshots/06-faculty-dashboard.png)
+
+### Mark Attendance
+
+![Mark Attendance](screenshots/07-mark-attendance.png)
+
+### Defaulters List
+
+![Defaulters](screenshots/08-defaulters-list.png)
+
+---
+
+## Administrator Module
+
+### Dashboard
+
+![Admin Dashboard](screenshots/09-admin-dashboard.png)
+
+### Faculty Management
+
+![Faculty Management](screenshots/10-manage-faculty.png)
+
+### Attendance Management
+
+![Attendance Management](screenshots/11-admin-attendance.png)
+
+### Defaulters Report
+
+![Defaulters Report](screenshots/12-admin-defaulters.png)
+
+---
+
+# 📂 Project Structure
+
+```
+frontend/
+backend/
+database/
+architecture/
+screenshots/
+docs/
+```
+
+---
+
+# ⚙ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/<your-username>/Smart-Attendance-Management-System.git
+```
+
+Install frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Install backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+Configure your MySQL database and update the backend configuration before running the application.
+
+---
+
+# 📖 Documentation
+
+Additional documentation available inside:
+
+- Architecture Diagrams
+- Database Schema
+- Project Report
+- Deployment Notes
+
+---
+
+# 🚀 Future Improvements
+
+- JWT Authentication
+- Password Encryption
+- Docker Deployment
+- CI/CD Pipeline
+- Email Notifications
+- Mobile Responsive Design
+- Attendance Analytics Dashboard
+
+---
+
+# 👨‍💻 Author
+
+**Vijay Ravi**
+
+B.Tech Computer Science Engineering
+
+GitHub: https://github.com/<your-username>
+
+LinkedIn: https://linkedin.com/in/<your-profile>
+
+---
+
+# 📄 License
+
+This project is intended for educational and portfolio purposes.
