@@ -248,11 +248,7 @@ Additional documentation available inside:
 
 **Vijay Ravi**
 
-B.Tech Computer Science Engineering
-
-GitHub: https://github.com/<your-username>
-
-LinkedIn: https://linkedin.com/in/<your-profile>
+email : vijayravi2705@gmail.com
 
 ---
 
